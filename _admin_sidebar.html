@@ -1,0 +1,26 @@
+<div class="sidebar">
+  <div class="sidebar-logo"><img src="{{ logo_url }}" alt="{{ site_name }}"></div>
+  <nav class="nav-links">
+    <a href="/admin/dashboard" class="nav-link {% if request.path=='/admin/dashboard' or request.path=='/admin/' %}active{% endif %}">📊 Dashboard</a>
+    <a href="/admin/articles" class="nav-link {% if '/admin/articles' in request.path or '/admin/article/' in request.path %}active{% endif %}">📰 Articles</a>
+    <a href="/admin/article/new" class="nav-link">✏️ New Article</a>
+    <div class="nav-sep">Content</div>
+    <a href="/admin/categories" class="nav-link {% if '/admin/categories' in request.path %}active{% endif %}">🗂️ Categories</a>
+    <a href="/admin/analytics" class="nav-link {% if '/admin/analytics' in request.path %}active{% endif %}">📈 Analytics</a>
+    <a href="/admin/comments" class="nav-link {% if '/admin/comments' in request.path %}active{% endif %}">💬 Comments</a>
+    {% if is_admin %}
+    <div class="nav-sep">Management</div>
+    <a href="/admin/team" class="nav-link {% if '/admin/team' in request.path %}active{% endif %}">👥 Team</a>
+    <a href="/admin/image-apis" class="nav-link {% if '/admin/image-apis' in request.path %}active{% endif %}">🖼️ Image APIs</a>
+    {% endif %}
+    {% if is_superadmin %}
+    <div class="nav-sep">Super Admin</div>
+    <a href="/admin/settings" class="nav-link {% if '/admin/settings' in request.path %}active{% endif %}">⚙️ Settings</a>
+    {% endif %}
+    <div class="nav-sep">Account</div>
+    <a href="/admin/profile" class="nav-link {% if '/admin/profile' in request.path %}active{% endif %}">👤 My Profile</a>
+    <a href="/" target="_blank" class="nav-link">🌐 View Site</a>
+    <a href="/admin/logout" class="nav-link" style="color:#cc0000">🚪 Logout</a>
+  </nav>
+  <div class="sidebar-user"><strong>{{ session.get('admin_name','—') }}</strong>{{ session.get('admin_role','editor')|title }}</div>
+</div>
