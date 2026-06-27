@@ -256,7 +256,9 @@ def react(article_id):
     if db: db.collection("articles").document(article_id).update({f"reactions.{r}":firestore.Increment(1)})
     return jsonify({"ok":True})
 
-@app.route("/about"); def about(): return render_template("static_page.html",title="About Us",content_key="about")
+@app.route("/about")
+def about():
+    return render_template("static_page.html", title="About Us", content_key="about")
 @app.route("/contact"); def contact(): return render_template("static_page.html",title="Contact Us",content_key="contact")
 @app.route("/privacy"); def privacy(): return render_template("static_page.html",title="Privacy Policy",content_key="privacy")
 @app.route("/terms"); def terms(): return render_template("static_page.html",title="Terms of Service",content_key="terms")
