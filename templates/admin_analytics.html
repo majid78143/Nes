@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Analytics — TezKhabar Admin</title><link rel="icon" href="{{ logo_url }}">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#e0e0e0;display:flex;min-height:100vh}a{color:inherit;text-decoration:none}.sidebar{width:220px;background:#111;border-right:1px solid #1a1a1a;min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column}.sidebar-logo{padding:20px 18px;border-bottom:1px solid #1a1a1a}.sidebar-logo img{height:36px;object-fit:contain}.nav-links{flex:1;padding:16px 0}.nav-link{display:flex;align-items:center;gap:10px;padding:11px 18px;color:#888;font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:.15s}.nav-link:hover,.nav-link.active{color:#fff;background:#1a1a1a;border-left-color:#cc0000}.nav-sep{padding:10px 18px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#333}.sidebar-user{padding:16px 18px;border-top:1px solid #1a1a1a;font-size:12px;color:#555}.sidebar-user strong{color:#888;display:block}.main-wrap{margin-left:220px;flex:1;padding:28px 32px}.page-head{margin-bottom:24px}.page-head h1{font-size:22px;font-weight:800;color:#fff}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:900px){.grid2{grid-template-columns:1fr}}.card{background:#111;border:1px solid #1a1a1a;border-radius:10px;overflow:hidden;margin-bottom:20px}.card-head{padding:14px 18px;border-bottom:1px solid #1a1a1a;font-size:14px;font-weight:700;color:#fff}table{width:100%;border-collapse:collapse}th{padding:9px 14px;text-align:left;font-size:11px;color:#444;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #1a1a1a}td{padding:11px 14px;font-size:13px;border-bottom:1px solid #111;color:#ccc}tr:last-child td{border-bottom:none}tr:hover td{background:#141414}.bar-wrap{padding:14px 18px}.bar-item{margin-bottom:14px}.bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;color:#888}.bar-track{background:#1a1a1a;border-radius:4px;height:6px;overflow:hidden}.bar-fill{height:100%;background:linear-gradient(90deg,#cc0000,#ff3333);border-radius:4px;transition:width .5s}</style>
+</head>
+<body>
+{% include "_admin_sidebar.html" %}
+<div class="main-wrap">
+  <div class="page-head"><h1>📈 Analytics</h1></div>
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-head">Top Articles by Views</div>
+        <table><thead><tr><th>#</th><th>Title</th><th>Views</th></tr></thead><tbody>
+          {% set max_v = top_articles[0].views if top_articles else 1 %}
+          {% for art in top_articles %}
+          <tr><td style="color:#cc0000;font-weight:700">{{ loop.index }}</td><td><a href="/article/{{ art.slug }}" target="_blank" style="color:#ccc">{{ art.title[:50] }}{% if art.title|length>50 %}...{% endif %}</a><div style="font-size:11px;color:#444">{{ art.category }}</div></td><td><strong style="color:#fff">{{ "{:,}".format(art.views or 0) }}</strong></td></tr>
+          {% else %}<tr><td colspan="3" style="text-align:center;color:#333;padding:20px">Data loading...</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-head">Top Search Queries</div>
+        {% if top_searches %}
+        <div class="bar-wrap">
+          {% set max_c = top_searches[0][1] if top_searches else 1 %}
+          {% for q, count in top_searches %}
+          <div class="bar-item">
+            <div class="bar-label"><span>{{ q }}</span><span>{{ count }}x</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:{{ [count/max_c*100, 100]|min }}%"></div></div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p style="padding:20px;color:#333;text-align:center">Abhi koi search data nahi</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

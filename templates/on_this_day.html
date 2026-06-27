@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Aaj Ka Itihas — {{ site_name }}{% endblock %}
+{% block content %}
+<div class="cat-hero"><h1>📅 Aaj Ka Itihas</h1><p>{{ today.strftime('%d %B') }} ke din — aaj se pehle ki khabrain</p></div>
+<div class="container"><div class="cards-grid">{% for art in articles %}
+<a href="/article/{{ art.slug }}" class="card"><div class="card-img-wrap"><div class="shimmer"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" class="card-img" loading="lazy" onload="fadeIn(this)"></div><div class="card-body"><span class="cat-tag">{{ art.category }}</span><h3>{{ art.title }}</h3><div class="meta"><span>{{ art.published_at.year if art.published_at else '' }} mein</span></div></div></a>
+{% else %}<div class="empty-state"><div class="empty-icon">📅</div><h3>Aaj ke din koi purani khabar nahi mili</h3></div>{% endfor %}</div></div>
+{% endblock %}

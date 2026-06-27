@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — {{ site_name }}{% endblock %}
+{% block content %}
+<div class="static-page">
+<h1>{{ title }}</h1>
+<div class="static-body">
+{% if content_key == 'about' %}
+<p><strong>TezKhabar</strong> Bharat ki sabse tez aur vishwasniy digital news platform hai. Hum 24/7 breaking news, politics, sports, business aur entertainment ki khabrain padte hain.</p>
+<p>Hamara mission hai ki har baat sachchi, tezi se aur imandari se aap tak pahunche.</p>
+<h3>Hamare Baare Mein</h3>
+<p>TezKhabar ki sthapna 2024 mein hui thi. Aaj hum lakhon pathkon tak pahunchte hain.</p>
+{% elif content_key == 'contact' %}
+<p>Humse contact karo:</p>
+<ul><li><strong>Email:</strong> editor@tezkhabar.com</li><li><strong>News Tips:</strong> tips@tezkhabar.com</li><li><strong>Business:</strong> business@tezkhabar.com</li></ul>
+{% elif content_key == 'privacy' %}
+<h3>Privacy Policy</h3>
+<p>TezKhabar aapki privacy ki izzat karta hai. Hum jo data collect karte hain woh sirf website improve karne ke liye use hota hai.</p>
+<p>Hum Google Analytics, Firebase aur Google AdSense use karte hain.</p>
+{% elif content_key == 'terms' %}
+<h3>Terms of Service</h3>
+<p>TezKhabar use karke aap hamare terms se agree karte hain. Sab content sirf informational purpose ke liye hai.</p>
+{% elif content_key == 'disclaimer' %}
+<h3>Disclaimer</h3>
+<p>TezKhabar pe publish hone wali khabrain public sources se li jaati hain. Hum accuracy ki koshish karte hain lekin kisi bhi error ki zimmedari nahi lete.</p>
+{% endif %}
+</div>
+</div>
+{% endblock %}

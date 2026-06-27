@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }} — Breaking News, Latest Khabar 24/7{% endblock %}
+{% block content %}
+{% if adsense_enabled %}<div class="ad-wrap"><ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_pub }}" data-ad-slot="{{ ad_slot_header }}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>{% endif %}
+<div class="page-wrap">
+<div class="content-col">
+
+{% if hero %}
+<a href="/article/{{ hero.slug }}" class="hero-card">
+  <div class="hero-img-wrap">
+    <div class="shimmer" id="shimmer-hero"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div>
+    <img src="{{ hero.image_url }}" alt="{{ hero.title }}" class="hero-img" loading="lazy" onload="fadeIn(this)">
+  </div>
+  <div class="hero-overlay">
+    <span class="cat-tag {{ hero.category|lower|replace(' ','-') }}">{{ hero.category }}</span>
+    <h1>{{ hero.title }}</h1>
+    <div class="meta"><span>⏰ {{ time_ago(hero.published_at) }}</span><span>👁 {{ "{:,}".format(hero.views or 0) }}</span></div>
+  </div>
+</a>
+{% endif %}
+
+{% if top_stories %}
+<div class="sec-head"><div class="sec-line"></div><h2>Top Stories</h2></div>
+<div class="cards-grid">
+{% for art in top_stories %}
+<a href="/article/{{ art.slug }}" class="card">
+  <div class="card-img-wrap"><div class="shimmer"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" class="card-img" loading="lazy" onload="fadeIn(this)"></div>
+  <div class="card-body"><span class="cat-tag {{ art.category|lower|replace(' ','-') }}">{{ art.category }}</span><h3>{{ art.title }}</h3><div class="meta"><span>⏰ {{ time_ago(art.published_at) }}</span><span>👁 {{ "{:,}".format(art.views or 0) }}</span></div></div>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
+{% for cat, cat_arts in by_category.items() %}{% if cat_arts %}
+<div class="sec-head"><div class="sec-line"></div><h2>{{ cat }}</h2><a href="/category/{{ cat }}" class="see-all">Aur →</a></div>
+<div class="cat-grid">
+  <a href="/article/{{ cat_arts[0].slug }}" class="cat-big">
+    <div class="card-img-wrap tall"><div class="shimmer"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div><img src="{{ cat_arts[0].image_url }}" alt="{{ cat_arts[0].title }}" class="card-img" loading="lazy" onload="fadeIn(this)"><div class="cat-overlay"><h3>{{ cat_arts[0].title }}</h3><span class="meta">{{ time_ago(cat_arts[0].published_at) }}</span></div></div>
+  </a>
+  <div class="cat-sm-list">
+    {% for art in cat_arts[1:4] %}
+    <a href="/article/{{ art.slug }}" class="sm-card">
+      <div class="sm-img-wrap"><div class="shimmer sm"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" loading="lazy" onload="fadeIn(this)"></div>
+      <div class="sm-body"><p>{{ art.title[:75] }}{% if art.title|length>75 %}...{% endif %}</p><span class="meta">{{ time_ago(art.published_at) }}</span></div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% if loop.index == 2 and adsense_enabled %}<div class="ad-wrap"><ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_pub }}" data-ad-slot="{{ ad_slot_in_article }}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>{% endif %}
+{% endif %}{% endfor %}
+
+</div>
+<aside class="sidebar">
+  <div class="widget">
+    <div class="widget-head">📈 Trending Now</div>
+    {% for art in trending %}
+    <a href="/article/{{ art.slug }}" class="trend-item">
+      <span class="trend-num {% if loop.index<=3 %}hot{% endif %}">{{ "%02d"|format(loop.index) }}</span>
+      <div><p>{{ art.title[:65] }}{% if art.title|length>65 %}...{% endif %}</p><span class="meta">👁 {{ "{:,}".format(art.views or 0) }}</span></div>
+    </a>
+    {% endfor %}
+  </div>
+  {% if adsense_enabled %}<div class="ad-wrap"><ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_pub }}" data-ad-slot="{{ ad_slot_sidebar }}" data-ad-format="auto"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>{% endif %}
+  {% if editors_pick %}
+  <div class="widget">
+    <div class="widget-head">⭐ Editor's Pick</div>
+    {% for art in editors_pick %}
+    <a href="/article/{{ art.slug }}" class="trend-item">
+      <div class="sm-img-wrap tiny"><div class="shimmer xs"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" loading="lazy" onload="fadeIn(this)"></div>
+      <div><p>{{ art.title[:60] }}{% if art.title|length>60 %}...{% endif %}</p><span class="cat-tag {{ art.category|lower|replace(' ','-') }} xs">{{ art.category }}</span></div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="widget" id="weather-widget">
+    <div class="widget-head">🌤 Mausam</div>
+    <div id="weather-body"><p class="meta">Loading...</p></div>
+  </div>
+</aside>
+</div>
+{% endblock %}

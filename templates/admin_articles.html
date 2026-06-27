@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Articles — TezKhabar Admin</title><link rel="icon" href="{{ logo_url }}"><link rel="stylesheet" href="/static/css/style.css"><style>{% include "_admin_style_inline.html" ignore missing %}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#e0e0e0;display:flex;min-height:100vh}a{color:inherit;text-decoration:none}.sidebar{width:220px;background:#111;border-right:1px solid #1a1a1a;min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column}.sidebar-logo{padding:20px 18px;border-bottom:1px solid #1a1a1a}.sidebar-logo img{height:36px;object-fit:contain}.nav-links{flex:1;padding:16px 0}.nav-link{display:flex;align-items:center;gap:10px;padding:11px 18px;color:#888;font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:.15s}.nav-link:hover,.nav-link.active{color:#fff;background:#1a1a1a;border-left-color:#cc0000}.nav-sep{padding:10px 18px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#333}.sidebar-user{padding:16px 18px;border-top:1px solid #1a1a1a;font-size:12px;color:#555}.sidebar-user strong{color:#888;display:block}.main-wrap{margin-left:220px;flex:1;padding:28px 32px}.page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.page-head h1{font-size:22px;font-weight:800;color:#fff}.btn{display:inline-flex;align-items:center;gap:6px;background:#cc0000;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:.15s}.btn:hover{background:#aa0000}.btn-sm{padding:6px 12px;font-size:12px}.btn-secondary{background:#1e1e1e;border:1px solid #2a2a2a;color:#ccc}.btn-secondary:hover{background:#252525}.btn-danger{background:#7a0000;color:#fff}.btn-danger:hover{background:#550000}.card{background:#111;border:1px solid #1a1a1a;border-radius:10px;overflow:hidden;margin-bottom:20px}.card-head{padding:14px 18px;border-bottom:1px solid #1a1a1a;font-size:14px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}table{width:100%;border-collapse:collapse}th{padding:10px 14px;text-align:left;font-size:11px;color:#444;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #1a1a1a}td{padding:11px 14px;font-size:13px;border-bottom:1px solid #111;color:#ccc;vertical-align:middle}tr:last-child td{border-bottom:none}tr:hover td{background:#141414}.status-badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase}.status-published{background:#0a2a0a;color:#4ade80;border:1px solid #166534}.status-draft{background:#1a1a00;color:#facc15;border:1px solid #713f12}.flash-zone{margin-bottom:20px}.flash{padding:10px 16px;border-radius:7px;font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}.flash-success{background:#0a2a0a;border:1px solid #166534;color:#4ade80}.flash-info{background:#0a1a2a;border:1px solid #1e3a5f;color:#60a5fa}.flash-danger{background:#2a0a0a;border:1px solid #7a1010;color:#f87171}.flash button{background:none;border:none;color:inherit;cursor:pointer}.filter-row{display:flex;gap:8px;align-items:center}select,input{background:#1a1a1a;border:1px solid #252525;border-radius:7px;padding:8px 12px;color:#ccc;font-size:13px;outline:none}select:focus,input:focus{border-color:#cc0000}
+</style>
+</head>
+<body>
+{% include "_admin_sidebar.html" %}
+<div class="main-wrap">
+  {% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-zone">{% for c,m in messages %}<div class="flash flash-{{c}}">{{ m }}<button onclick="this.parentElement.remove()">✕</button></div>{% endfor %}</div>{% endif %}{% endwith %}
+  <div class="page-head">
+    <h1>Articles ({{ articles|length }})</h1>
+    <div class="filter-row">
+      <form method="GET" style="display:flex;gap:8px">
+        <select name="status" onchange="this.form.submit()">
+          <option value="" {% if not status_filter %}selected{% endif %}>All Status</option>
+          <option value="published" {% if status_filter=='published' %}selected{% endif %}>Published</option>
+          <option value="draft" {% if status_filter=='draft' %}selected{% endif %}>Draft</option>
+        </select>
+      </form>
+      <a href="/admin/article/new" class="btn">+ New Article</a>
+    </div>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th>Author</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for art in articles %}
+        <tr>
+          <td><a href="/article/{{ art.slug }}" target="_blank" style="color:#cc0000;font-weight:500">{{ art.title[:55] }}{% if art.title|length>55 %}...{% endif %}</a></td>
+          <td style="color:#888">{{ art.category }}</td>
+          <td><span class="status-badge status-{{ art.status }}">{{ art.status }}</span></td>
+          <td>{{ "{:,}".format(art.views or 0) }}</td>
+          <td style="color:#888">{{ art.author_name or '—' }}</td>
+          <td style="color:#555;font-size:12px">{{ time_ago(art.created_at) }}</td>
+          <td>
+            <div style="display:flex;gap:6px">
+              <a href="/admin/article/{{ art.id }}/edit" class="btn btn-sm btn-secondary">Edit</a>
+              <form action="/admin/article/{{ art.id }}/delete" method="POST" style="display:inline" onsubmit="return confirm('Delete karna chahte ho?')">
+                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" style="text-align:center;color:#333;padding:32px">Koi article nahi mila. <a href="/admin/article/new" style="color:#cc0000">Pehla article likho!</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ category }} News — {{ site_name }}{% endblock %}
+{% block content %}
+<div class="cat-hero"><h1>{{ category }}</h1><p>{{ category }} ki sabse nayi khabrain</p></div>
+{% if adsense_enabled %}<div class="ad-wrap"><ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_pub }}" data-ad-slot="{{ ad_slot_header }}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>{% endif %}
+<div class="page-wrap">
+<div class="content-col">
+{% if articles %}<div class="cards-grid">{% for art in articles %}
+<a href="/article/{{ art.slug }}" class="card"><div class="card-img-wrap"><div class="shimmer"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" class="card-img" loading="lazy" onload="fadeIn(this)"></div><div class="card-body"><span class="cat-tag {{ art.category|lower|replace(' ','-') }}">{{ art.category }}</span><h3>{{ art.title }}</h3>{% if art.summary %}<p class="card-sum">{{ art.summary[:90] }}...</p>{% endif %}<div class="meta"><span>⏰ {{ time_ago(art.published_at) }}</span><span>👁 {{ "{:,}".format(art.views or 0) }}</span></div></div></a>
+{% endfor %}</div>
+<div class="pagination">{% if page>1 %}<a href="?page={{ page-1 }}" class="page-btn">← Pichla</a>{% endif %}<span class="page-num">Page {{ page }}</span>{% if has_next %}<a href="?page={{ page+1 }}" class="page-btn">Agla →</a>{% endif %}</div>
+{% else %}<div class="empty-state"><div class="empty-icon">📰</div><h3>Abhi koi khabar nahi</h3><p>Jald hi {{ category }} ki khabrain aayengi.</p><a href="/" class="btn-back">Home Page</a></div>{% endif %}
+</div>
+<aside class="sidebar">
+<div class="widget"><div class="widget-head">📈 {{ category }} Trending</div>{% for art in trending %}<a href="/article/{{ art.slug }}" class="trend-item"><span class="trend-num {% if loop.index<=3 %}hot{% endif %}">{{ "%02d"|format(loop.index) }}</span><div><p>{{ art.title[:60] }}...</p></div></a>{% endfor %}</div>
+{% if adsense_enabled %}<div class="ad-wrap"><ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_pub }}" data-ad-slot="{{ ad_slot_sidebar }}" data-ad-format="auto"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>{% endif %}
+</aside>
+</div>
+{% endblock %}

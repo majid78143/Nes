@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ author.name }} — {{ site_name }}{% endblock %}
+{% block content %}
+<div class="author-hero">
+  <div class="author-av">{% if author.profile_pic %}<img src="{{ author.profile_pic }}" alt="{{ author.name }}">{% else %}<span>{{ author.name[0]|upper }}</span>{% endif %}</div>
+  <div><h1>{{ author.name }}</h1>{% if author.designation %}<p class="author-role">{{ author.designation }}</p>{% endif %}{% if author.bio %}<p class="author-bio">{{ author.bio }}</p>{% endif %}<p class="meta">{{ articles|length }} articles published</p></div>
+</div>
+<div class="container"><div class="cards-grid">{% for art in articles %}
+<a href="/article/{{ art.slug }}" class="card"><div class="card-img-wrap"><div class="shimmer"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" class="card-img" loading="lazy" onload="fadeIn(this)"></div><div class="card-body"><span class="cat-tag">{{ art.category }}</span><h3>{{ art.title }}</h3><div class="meta"><span>{{ time_ago(art.published_at) }}</span><span>👁 {{ "{:,}".format(art.views or 0) }}</span></div></div></a>
+{% endfor %}</div></div>
+{% endblock %}

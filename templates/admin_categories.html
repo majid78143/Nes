@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Categories — TezKhabar Admin</title><link rel="icon" href="{{ logo_url }}">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#e0e0e0;display:flex;min-height:100vh}a{color:inherit;text-decoration:none}.sidebar{width:220px;background:#111;border-right:1px solid #1a1a1a;min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column}.sidebar-logo{padding:20px 18px;border-bottom:1px solid #1a1a1a}.sidebar-logo img{height:36px;object-fit:contain}.nav-links{flex:1;padding:16px 0}.nav-link{display:flex;align-items:center;gap:10px;padding:11px 18px;color:#888;font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:.15s}.nav-link:hover,.nav-link.active{color:#fff;background:#1a1a1a;border-left-color:#cc0000}.nav-sep{padding:10px 18px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#333}.sidebar-user{padding:16px 18px;border-top:1px solid #1a1a1a;font-size:12px;color:#555}.sidebar-user strong{color:#888;display:block}.main-wrap{margin-left:220px;flex:1;padding:28px 32px}.page-head{margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}.page-head h1{font-size:22px;font-weight:800;color:#fff}.btn{display:inline-flex;align-items:center;gap:6px;background:#cc0000;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer}.btn:hover{background:#aa0000}.card{background:#111;border:1px solid #1a1a1a;border-radius:10px;overflow:hidden;margin-bottom:20px}.card-head{padding:14px 18px;border-bottom:1px solid #1a1a1a;font-size:14px;font-weight:700;color:#fff}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:900px){.grid2{grid-template-columns:1fr}}.cat-grid{display:flex;flex-wrap:wrap;gap:10px;padding:16px}.cat-chip{padding:8px 14px;background:#1a1a1a;border:1px solid #222;border-radius:6px;font-size:13px;color:#ccc;cursor:pointer}.cat-chip.default{border-color:#333;color:#666;font-style:italic}.form-card{background:#111;border:1px solid #1a1a1a;border-radius:10px;padding:22px}.form-card h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:16px}label{display:block;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}input{width:100%;background:#151515;border:1px solid #222;border-radius:7px;padding:10px 12px;color:#ddd;font-size:13px;outline:none;margin-bottom:14px}input:focus{border-color:#cc0000}.flash-zone{margin-bottom:20px}.flash{padding:10px 16px;border-radius:7px;font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}.flash-success{background:#0a2a0a;border:1px solid #166534;color:#4ade80}.flash button{background:none;border:none;color:inherit;cursor:pointer}</style>
+</head>
+<body>
+{% include "_admin_sidebar.html" %}
+<div class="main-wrap">
+  {% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-zone">{% for c,m in messages %}<div class="flash flash-{{c}}">{{ m }}<button onclick="this.parentElement.remove()">✕</button></div>{% endfor %}</div>{% endif %}{% endwith %}
+  <div class="page-head"><h1>Categories</h1></div>
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-head">Default Categories</div>
+        <div class="cat-grid">{% for c in default_cats %}<a href="/category/{{ c }}" target="_blank" class="cat-chip default">{{ c }}</a>{% endfor %}</div>
+      </div>
+      {% if categories %}
+      <div class="card">
+        <div class="card-head">Custom Categories ({{ categories|length }})</div>
+        <div class="cat-grid">{% for c in categories %}<span class="cat-chip">{{ c.name }}</span>{% endfor %}</div>
+      </div>
+      {% endif %}
+    </div>
+    <div>
+      <div class="form-card">
+        <h3>Naya Category Add Karo</h3>
+        <form action="/admin/categories" method="POST">
+          <label>Category Name</label>
+          <input type="text" name="name" required placeholder="eg: Crime, Education, Weather">
+          <button class="btn" type="submit" style="width:100%;justify-content:center">+ Add Category</button>
+        </form>
+        <p style="font-size:12px;color:#333;margin-top:14px">Default categories: {{ default_cats|join(', ') }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

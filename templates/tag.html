@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}#{{ tag }} — {{ site_name }}{% endblock %}
+{% block content %}
+<div class="cat-hero"><h1>#{{ tag }}</h1><p>{{ articles|length }} articles tagged "{{ tag }}"</p></div>
+<div class="container"><div class="cards-grid">{% for art in articles %}
+<a href="/article/{{ art.slug }}" class="card"><div class="card-img-wrap"><div class="shimmer"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" class="card-img" loading="lazy" onload="fadeIn(this)"></div><div class="card-body"><span class="cat-tag">{{ art.category }}</span><h3>{{ art.title }}</h3><div class="meta"><span>{{ time_ago(art.published_at) }}</span></div></div></a>
+{% else %}<div class="empty-state"><h3>Koi article nahi mila</h3></div>{% endfor %}</div></div>
+{% endblock %}
