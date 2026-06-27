@@ -13,7 +13,7 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=1)
 
 SITE_NAME    = "TezKhabar"
 SITE_TAGLINE = "Breaking News · 24/7"
-SITE_URL     = "https://tezkhabar.com"
+SITE_URL     = "https://tezkhabar-india.onrender.com"
 LOGO_URL     = "https://cdn.postimage.me/2026/06/26/56970.jpg"
 GOOGLE_VERIFICATION  = "REPLACE_WITH_SEARCH_CONSOLE_CODE"
 ADSENSE_PUB          = "ca-pub-0000000000000000"
