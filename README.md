@@ -18,7 +18,7 @@ gunicorn app:app
 
 ## Login
 
-- **URL:** `https://tezkhabar.com/admin/login`
+- **URL:** `https://tezkhabar-india.onrender.com`
 - Super Admin + Admin + Editor — sab isi ek page se login karte hain
 
 ## Admin Roles
