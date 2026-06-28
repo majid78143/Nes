@@ -158,7 +158,7 @@ def index():
 @app.route("/article/<slug>")
 def article(slug):
     if not db: abort(404)
-    docs=list(db.collection("articles").where("slug","==",slug).where("status","==","published").limit(1).stream())
+    docs=list(db.collection("articles").where("slug","==",slug).limit(1).stream())
     if not docs: abort(404)
     doc=docs[0]; art={"id":doc.id,**doc.to_dict()}
     try: db.collection("articles").document(doc.id).update({"views":firestore.Increment(1)})
