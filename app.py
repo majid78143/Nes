@@ -17,8 +17,19 @@ SITE_URL     = "https://tezkhabar-india.onrender.com"
 LOGO_URL     = "https://cdn.postimage.me/2026/06/26/56970.jpg"
 GOOGLE_VERIFICATION  = "g45Udug4GCB-Ra_KHG80vOV4zsc1bwbVby7RrmtZRFk"
 ADSENSE_PUB          = "ca-pub-8228784571140150"
-AD_SLOT_HEADER       = "1111111111"
-AD_SLOT_SIDEBAR      = "2222222222"
+AD_SLOT_HEADER       = "<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228784571140150"
+     crossorigin="anonymous"></script>
+<!-- 2 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-8228784571140150"
+     data-ad-slot="5369764793"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>"
+AD_SLOT_SIDEBAR      = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8228784571140150"
 AD_SLOT_ARTICLE      = "3333333333"
 AD_SLOT_FOOTER       = "4444444444"
 ADSENSE_ENABLED      = True
