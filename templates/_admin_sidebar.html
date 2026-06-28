@@ -1,0 +1,76 @@
+<div class="sidebar">
+  <div class="sidebar-logo"><img src="{{ logo_url }}" alt="{{ site_name }}"></div>
+
+<style>
+.admin-notice-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#1a1500;border-bottom:1px solid #3a2d00;font-size:12px;color:#fbbf24;position:fixed;top:0;left:220px;right:0;z-index:200}
+.admin-notice-bar svg{width:14px;height:14px;stroke:#fbbf24;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.admin-notice-bar .an-text{flex:1}
+.anb-close{background:none;border:none;color:#fbbf24;cursor:pointer;font-size:15px;opacity:.7;padding:0 2px}
+@media(max-width:700px){.admin-notice-bar{left:0}}
+</style>
+<div id="admin-notice-zone"></div>
+<script>
+(function(){
+  async function loadAdminNotices(){
+    try{
+      const r=await fetch("/api/admin/notices");
+      const data=await r.json();
+      const zone=document.getElementById("admin-notice-zone");
+      if(!zone)return;
+      zone.innerHTML="";
+      (data.notices||[]).forEach(n=>{
+        const bar=document.createElement("div");
+        bar.className="admin-notice-bar";
+        const txt=document.createTextNode(n.text||"");
+        bar.innerHTML='<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+        const span=document.createElement("span");
+        span.className="an-text";
+        span.textContent=n.text||"";
+        const btn=document.createElement("button");
+        btn.className="anb-close";
+        btn.textContent="✕";
+        btn.onclick=async function(){
+          await fetch("/admin/notice/"+n.id+"/dismiss",{method:"POST"});
+          bar.remove();
+        };
+        bar.appendChild(span);
+        bar.appendChild(btn);
+        zone.appendChild(bar);
+      });
+      // Push main-wrap down if notices present
+      const mw=document.querySelector(".main-wrap");
+      if(mw&&data.notices&&data.notices.length) mw.style.paddingTop=(28+(data.notices.length*44))+"px";
+    }catch(e){}
+  }
+  loadAdminNotices();
+})();
+</script>
+  <nav class="nav-links">
+    <a href="/admin/dashboard" class="nav-link {% if request.path=='/admin/dashboard' or request.path=='/admin/' %}active{% endif %}">📊 Dashboard</a>
+    <a href="/admin/articles" class="nav-link {% if '/admin/articles' in request.path or '/admin/article/' in request.path %}active{% endif %}">📰 Articles</a>
+    <a href="/admin/article/new" class="nav-link">✏️ New Article</a>
+    <div class="nav-sep">Content</div>
+    <a href="/admin/categories" class="nav-link {% if '/admin/categories' in request.path %}active{% endif %}">🗂️ Categories</a>
+    <a href="/admin/analytics" class="nav-link {% if '/admin/analytics' in request.path %}active{% endif %}">📈 Analytics</a>
+    <a href="/admin/comments" class="nav-link {% if '/admin/comments' in request.path %}active{% endif %}">💬 Comments</a>
+    {% if is_admin %}
+    <div class="nav-sep">Management</div>
+    <a href="/admin/team" class="nav-link {% if '/admin/team' in request.path %}active{% endif %}">👥 Team</a>
+    <a href="/admin/image-apis" class="nav-link {% if '/admin/image-apis' in request.path %}active{% endif %}">🖼️ Image APIs</a>
+    {% endif %}
+    {% if is_superadmin %}
+    <div class="nav-sep">Super Admin</div>
+    <a href="/admin/settings" class="nav-link {% if '/admin/settings' in request.path %}active{% endif %}">⚙️ Settings</a>
+    {% endif %}
+    <div class="nav-sep">Team</div>
+    <a href="/admin/chat" class="nav-link {% if '/admin/chat' in request.path %}active{% endif %}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Team Chat
+    </a>
+    <div class="nav-sep">Account</div>
+    <a href="/admin/profile" class="nav-link {% if '/admin/profile' in request.path %}active{% endif %}">👤 My Profile</a>
+    <a href="/" target="_blank" class="nav-link">🌐 View Site</a>
+    <a href="/admin/logout" class="nav-link" style="color:#cc0000">🚪 Logout</a>
+  </nav>
+  <div class="sidebar-user"><strong>{{ session.get('admin_name','—') }}</strong>{{ session.get('admin_role','editor')|title }}</div>
+</div>
