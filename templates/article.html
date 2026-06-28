@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block title %}{{ article.title }} — {{ site_name }}{% endblock %}
 {% block og_title %}{{ article.title }}{% endblock %}
+{% block og_description %}{{ article.summary or article.title[:150] }}{% endblock %}
 {% block og_image %}{{ article.image_url or logo_url }}{% endblock %}
+{% block og_url %}{{ site_url }}/article/{{ article.slug }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block twitter_title %}{{ article.title }}{% endblock %}
+{% block twitter_description %}{{ article.summary or article.title[:150] }}{% endblock %}
+{% block twitter_image %}{{ article.image_url or logo_url }}{% endblock %}
 {% block description %}{{ article.summary or article.title[:150] }}{% endblock %}
 {% block content %}
 <div class="page-wrap">
@@ -89,6 +95,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(w&&data.trending){let h='<div class="widget-head">📈 Trending</div>';data.trending.slice(0,5).forEach((a,i)=>{h+=`<a href="/article/${a.slug}" class="trend-item"><span class="trend-num ${i<3?'hot':''}">${String(i+1).padStart(2,'0')}</span><div><p>${a.title.substring(0,65)}...</p><span class="meta">👁 ${a.views.toLocaleString()}</span></div></a>`;});w.innerHTML=h;}
   });
 });
+function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copy ho gaya!'));}
 function doReact(id,r,btn){
   fetch('/article/'+id+'/react',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reaction:r})}).then(()=>{const s=btn.querySelector('span');s.textContent=parseInt(s.textContent||0)+1;btn.classList.add('reacted');});
 }
