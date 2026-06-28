@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} — {{ site_name }}{% endblock %}
+{% block og_title %}{{ article.title }}{% endblock %}
+{% block og_image %}{{ article.image_url or logo_url }}{% endblock %}
+{% block description %}{{ article.summary or article.title[:150] }}{% endblock %}
+{% block content %}
+<div class="page-wrap">
+<div class="content-col">
+<article class="art-wrap">
+  <nav class="breadcrumb"><a href="/">Home</a> › <a href="/category/{{ article.category }}">{{ article.category }}</a> › Article</nav>
+  <span class="cat-tag {{ article.category|lower|replace(' ','-') }}">{{ article.category }}</span>
+  <h1 class="art-title">{{ article.title }}</h1>
+  {% if article.summary %}<p class="art-lead">{{ article.summary }}</p>{% endif %}
+  <div class="art-byline">
+    {% if article.author_name %}<a href="/author/{{ article.author_id }}" class="byline-author">✍ {{ article.author_name }}</a>{% endif %}
+    <span>⏰ {{ time_ago(article.published_at) }}</span>
+    <span>👁 {{ "{:,}".format(article.views or 0) }} views</span>
+    <span id="read-time" class="read-time"></span>
+  </div>
+  <div class="share-row">
+    <span>Share:</span>
+    <a href="https://wa.me/?text={{ article.title|urlencode }}%20{{ (site_url~'/article/'~article.slug)|urlencode }}" target="_blank" class="share-btn wa">WhatsApp</a>
+    <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ (site_url~'/article/'~article.slug)|urlencode }}" target="_blank" class="share-btn tw">Twitter</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ (site_url~'/article/'~article.slug)|urlencode }}" target="_blank" class="share-btn fb">Facebook</a>
+    <button class="share-btn copy" onclick="copyLink()">Copy Link</button>
+    <button class="share-btn" onclick="changeFontSize(-1)" title="Chota">A-</button>
+    <button class="share-btn" onclick="changeFontSize(1)" title="Bada">A+</button>
+  </div>
+  {% if article.image_url %}
+  <div class="cover-wrap">
+    <div class="shimmer cover"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div>
+    <img src="{{ article.image_url }}" alt="{{ article.title }}" class="cover-img" loading="lazy" onload="fadeIn(this)">
+  </div>
+  {% endif %}
+  {% if adsense_enabled %}<div class="ad-wrap"><ins class="adsbygoogle" style="display:block;text-align:center" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="{{ adsense_pub }}" data-ad-slot="{{ ad_slot_in_article }}"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>{% endif %}
+  <div class="art-body" id="art-body">{{ article.content|safe }}</div>
+  <div class="reactions">
+    <span>Aapka kya kehna hai?</span>
+    {% for r,label in [('like','👍 Sahi'),('angry','😠 Gussa'),('sad','😢 Dukh'),('shocked','😱 Shock')] %}
+    <button class="react-btn" onclick="doReact('{{ article.id }}','{{ r }}',this)">{{ label }} <span>{{ (article.reactions or {}).get(r,0) }}</span></button>
+    {% endfor %}
+  </div>
+  {% if article.tags %}
+  <div class="tags-row">
+    🏷
+    {% for tag in article.tags %}<a href="/tag/{{ tag }}" class="tag-chip">{{ tag }}</a>{% endfor %}
+  </div>
+  {% endif %}
+  {% if related %}
+  <div class="sec-head"><div class="sec-line"></div><h2>Related Articles</h2></div>
+  <div class="cards-grid four-col">
+    {% for art in related %}
+    <a href="/article/{{ art.slug }}" class="card">
+      <div class="card-img-wrap"><div class="shimmer"><img src="{{ logo_url }}" alt="" class="shimmer-logo"><div class="shimmer-shine"></div></div><img src="{{ art.image_url }}" alt="{{ art.title }}" class="card-img" loading="lazy" onload="fadeIn(this)"></div>
+      <div class="card-body"><span class="cat-tag {{ art.category|lower|replace(' ','-') }}">{{ art.category }}</span><h3>{{ art.title[:60] }}{% if art.title|length>60 %}...{% endif %}</h3></div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if settings.get('user_comments_enabled') %}
+  <div class="comments-sec">
+    <div class="sec-head"><div class="sec-line"></div><h2>Comments ({{ comments|length }})</h2></div>
+    {% for c in comments %}
+    <div class="comment"><div class="comment-av">{{ c.name[0]|upper }}</div><div><strong>{{ c.name }}</strong><span class="meta"> · {{ time_ago(c.created_at) }}</span><p>{{ c.text }}</p></div></div>
+    {% endfor %}
+    <form action="/article/{{ article.id }}/comment" method="POST" class="comment-form">
+      <h4>Comment karo</h4>
+      <input type="text" name="name" placeholder="Aapka naam" required>
+      <textarea name="text" rows="4" placeholder="Aapki rai..." required maxlength="1000"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+  {% endif %}
+</article>
+</div>
+<aside class="sidebar">
+  <div class="widget" id="sidebar-trending"><div class="widget-head">📈 Trending</div><p class="meta" style="padding:12px">Loading...</p></div>
+  {% if adsense_enabled %}<div class="ad-wrap sticky-ad"><ins class="adsbygoogle" style="display:block" data-ad-client="{{ adsense_pub }}" data-ad-slot="{{ ad_slot_sidebar }}" data-ad-format="auto"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>{% endif %}
+</aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const body=document.getElementById('art-body');
+  if(body){const w=body.innerText.split(' ').length;document.getElementById('read-time').textContent=`📖 ${Math.ceil(w/200)} min read`;}
+  fetch('/api/trending').then(r=>r.json()).then(data=>{
+    const w=document.getElementById('sidebar-trending');
+    if(w&&data.trending){let h='<div class="widget-head">📈 Trending</div>';data.trending.slice(0,5).forEach((a,i)=>{h+=`<a href="/article/${a.slug}" class="trend-item"><span class="trend-num ${i<3?'hot':''}">${String(i+1).padStart(2,'0')}</span><div><p>${a.title.substring(0,65)}...</p><span class="meta">👁 ${a.views.toLocaleString()}</span></div></a>`;});w.innerHTML=h;}
+  });
+});
+function doReact(id,r,btn){
+  fetch('/article/'+id+'/react',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reaction:r})}).then(()=>{const s=btn.querySelector('span');s.textContent=parseInt(s.textContent||0)+1;btn.classList.add('reacted');});
+}
+</script>
+{% endblock %}

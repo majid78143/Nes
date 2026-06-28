@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>{{ site_url }}/</loc><changefreq>hourly</changefreq><priority>1.0</priority></url>
+  {% for cat in all_categories %}
+  <url><loc>{{ site_url }}/category/{{ cat }}</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  {% endfor %}
+  {% for art in articles %}{% if art.slug %}
+  <url>
+    <loc>{{ site_url }}/article/{{ art.slug }}</loc>
+    <lastmod>{{ art.published_at.strftime('%Y-%m-%d') if art.published_at and hasattr(art.published_at,'strftime') else '' }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  {% endif %}{% endfor %}
+</urlset>
