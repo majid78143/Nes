@@ -8,9 +8,15 @@
 <title>{% block title %}{{ site_name }} — {{ site_tagline }}{% endblock %}</title>
 <meta name="description" content="{% block description %}{{ site_name }} - Bharat ki sabse tez khabar{% endblock %}">
 <meta property="og:title" content="{% block og_title %}{{ site_name }}{% endblock %}">
+<meta property="og:description" content="{% block og_description %}{{ site_name }} - Bharat ki sabse tez khabar{% endblock %}">
 <meta property="og:image" content="{% block og_image %}{{ logo_url }}{% endblock %}">
-<meta property="og:type" content="website">
+<meta property="og:url" content="{% block og_url %}{{ request.url }}{% endblock %}">
+<meta property="og:type" content="{% block og_type %}website{% endblock %}">
+<meta property="og:site_name" content="{{ site_name }}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{% block twitter_title %}{{ site_name }}{% endblock %}">
+<meta name="twitter:description" content="{% block twitter_description %}{{ site_name }} - Bharat ki sabse tez khabar{% endblock %}">
+<meta name="twitter:image" content="{% block twitter_image %}{{ logo_url }}{% endblock %}">
 <link rel="icon" href="{{ logo_url }}" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
