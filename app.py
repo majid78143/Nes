@@ -346,8 +346,11 @@ def accept_invite(token):
     if not doc.exists: abort(404)
     inv=doc.to_dict()
     if inv.get("used"): return render_template("invite.html",error="Link pehle use ho chuka hai.")
-    if inv.get("expires_at") and datetime.utcnow()>inv["expires_at"]:
-        return render_template("invite.html",error="Link expire ho gaya. Naya invite maango.")
+        try:
+        _exp=inv.get("expires_at")
+        if _exp and datetime.utcnow()>_exp.replace(tzinfo=None):
+            return render_template("invite.html",error="Link expire ho gaya. Naya invite maango.")
+    except: pass
     if request.method=="POST":
         name=request.form.get("name","").strip(); pw=request.form.get("password",""); confirm=request.form.get("confirm","")
         if not name or not pw or pw!=confirm:
