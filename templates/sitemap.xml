@@ -7,7 +7,7 @@
   {% for art in articles %}{% if art.slug %}
   <url>
     <loc>{{ site_url }}/article/{{ art.slug }}</loc>
-    <lastmod>{{ art.published_at.strftime('%Y-%m-%d') if art.published_at and hasattr(art.published_at,'strftime') else '' }}</lastmod>
+    {% if art.published_at and art.published_at.strftime is defined %}<lastmod>{{ art.published_at.strftime("%Y-%m-%d") }}</lastmod>{% endif %}
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
