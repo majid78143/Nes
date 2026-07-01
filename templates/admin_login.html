@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login — TezKhabar</title>
+<link rel="icon" href="https://cdn.postimage.me/2026/06/26/56970.jpg">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:44px 36px;width:100%;max-width:400px}
+.logo-wrap{text-align:center;margin-bottom:30px}.logo-wrap img{height:48px;object-fit:contain}
+h2{color:#fff;font-size:20px;font-weight:800;text-align:center;margin-bottom:6px}
+.sub{color:#555;font-size:13px;text-align:center;margin-bottom:26px}
+label{display:block;color:#777;font-size:11px;letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px}
+input{width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:8px;padding:11px 14px;color:#eee;font-size:14px;outline:none;transition:.2s;margin-bottom:16px}
+input:focus{border-color:#cc0000;background:#1e1010}
+.btn{width:100%;background:#cc0000;color:#fff;border:none;border-radius:8px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:.15s;margin-top:4px}
+.btn:hover{background:#aa0000}
+.error{background:#1e0000;border:1px solid #550000;color:#ff6666;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:18px}
+.footer-note{color:#2a2a2a;font-size:11px;text-align:center;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo-wrap"><img src="https://cdn.postimage.me/2026/06/26/56970.jpg" alt="TezKhabar"></div>
+  <h2>Admin Panel</h2>
+  <p class="sub">TezKhabar Content Management</p>
+  {% if error %}<div class="error">⚠ {{ error }}</div>{% endif %}
+  <form method="POST" autocomplete="off">
+    <!-- FIX: CSRF token add kiya -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Email Address</label>
+    <input type="email" name="email" required placeholder="admin@tezkhabar.com" autofocus>
+    <label>Password</label>
+    <input type="password" name="password" required placeholder="••••••••••">
+    <button class="btn" type="submit">Login →</button>
+  </form>
+  <p class="footer-note">Unauthorized access is prohibited</p>
+</div>
+</body>
+</html>

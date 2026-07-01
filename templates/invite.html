@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Team Join Karo — {{ site_name }}{% endblock %}
+{% block content %}
+<div style="max-width:460px;margin:60px auto;padding:0 20px">
+<div style="background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:40px">
+<div style="text-align:center;margin-bottom:24px"><img src="{{ logo_url }}" alt="{{ site_name }}" style="height:44px"></div>
+<h2 style="color:#fff;text-align:center;margin-bottom:8px">TezKhabar Team Join Karo</h2>
+{% if error %}
+<div style="background:#1e0000;border:1px solid #550000;color:#ff6666;padding:10px 14px;border-radius:8px;margin:16px 0;font-size:13px">{{ error }}</div>
+{% elif invite %}
+<p style="color:#888;font-size:13px;text-align:center;margin-bottom:24px">{{ invite.email }} ko <strong style="color:#cc0000">{{ invite.role|title }}</strong> role ke liye invite kiya gaya hai</p>
+<form method="POST">
+  <!-- FIX: CSRF token add kiya -->
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div style="margin-bottom:14px"><label style="color:#666;font-size:11px;text-transform:uppercase;display:block;margin-bottom:5px">Full Name</label><input type="text" name="name" required placeholder="Aapka poora naam" style="width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:8px;padding:11px 14px;color:#eee;font-size:14px;outline:none"></div>
+  <div style="margin-bottom:14px"><label style="color:#666;font-size:11px;text-transform:uppercase;display:block;margin-bottom:5px">Password</label><input type="password" name="password" required placeholder="Strong password" style="width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:8px;padding:11px 14px;color:#eee;font-size:14px;outline:none"></div>
+  <div style="margin-bottom:22px"><label style="color:#666;font-size:11px;text-transform:uppercase;display:block;margin-bottom:5px">Confirm Password</label><input type="password" name="confirm" required placeholder="Password dobara likho" style="width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:8px;padding:11px 14px;color:#eee;font-size:14px;outline:none"></div>
+  <button type="submit" style="width:100%;background:#cc0000;color:#fff;border:none;border-radius:8px;padding:13px;font-size:15px;font-weight:700;cursor:pointer">Account Banao →</button>
+</form>
+{% endif %}
+</div>
+</div>
+{% endblock %}

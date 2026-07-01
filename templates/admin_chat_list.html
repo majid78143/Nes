@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Team Chat — TezKhabar</title><link rel="icon" href="{{ logo_url }}">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#e0e0e0;display:flex;min-height:100vh}a{color:inherit;text-decoration:none}
+.sidebar{width:220px;background:#111;border-right:1px solid #1a1a1a;min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid #1a1a1a}.sidebar-logo img{height:36px;object-fit:contain}
+.nav-links{flex:1;padding:16px 0}.nav-link{display:flex;align-items:center;gap:10px;padding:11px 18px;color:#888;font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:.15s}.nav-link:hover,.nav-link.active{color:#fff;background:#1a1a1a;border-left-color:#cc0000}
+.nav-sep{padding:10px 18px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#333}
+.sidebar-user{padding:16px 18px;border-top:1px solid #1a1a1a;font-size:12px;color:#555}.sidebar-user strong{color:#888;display:block}
+.main-wrap{margin-left:220px;flex:1;padding:28px 32px}.page-head{margin-bottom:24px;display:flex;align-items:center;justify-content:space-between}
+.page-head h1{font-size:22px;font-weight:800;color:#fff}
+.btn{display:inline-flex;align-items:center;gap:6px;background:#cc0000;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}.btn:hover{background:#aa0000}
+.btn-secondary{background:#1e1e1e;border:1px solid #2a2a2a;color:#ccc}.btn-danger{background:#7a0000}
+.rooms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.room-card{background:#111;border:1px solid #1a1a1a;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:.2s}.room-card:hover{border-color:#cc0000;background:#131313}
+.room-icon{width:42px;height:42px;background:#1a1a1a;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.room-icon svg{width:22px;height:22px;stroke:#cc0000;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.room-name{font-size:15px;font-weight:700;color:#fff}.room-meta{font-size:11px;color:#444}
+.room-actions{display:flex;gap:8px;margin-top:4px}
+.create-form{background:#111;border:1px solid #1a1a1a;border-radius:10px;padding:18px;margin-bottom:24px;display:flex;gap:10px;align-items:flex-end}
+.create-form input{flex:1;background:#151515;border:1px solid #222;border-radius:7px;padding:10px 12px;color:#ddd;font-size:13px;outline:none}
+.create-form input:focus{border-color:#cc0000}
+.flash-zone{margin-bottom:20px}.flash{padding:10px 16px;border-radius:7px;font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}.flash-success{background:#0a2a0a;border:1px solid #166534;color:#4ade80}.flash button{background:none;border:none;color:inherit;cursor:pointer}
+.empty{text-align:center;padding:48px;color:#333;font-size:14px}
+@media(max-width:700px){.main-wrap{margin-left:0;padding:16px}.create-form{flex-direction:column}}
+</style></head>
+<body>
+{% include "_admin_sidebar.html" %}
+<div class="main-wrap">
+  {% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-zone">{% for c,m in messages %}<div class="flash flash-{{c}}">{{ m }}<button onclick="this.parentElement.remove()">&#x2715;</button></div>{% endfor %}</div>{% endif %}{% endwith %}
+  <div class="page-head"><h1>Team Chat Rooms</h1></div>
+  {% if is_superadmin %}
+  <div class="create-form">
+    <div style="flex:1">
+      <div style="font-size:11px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Naya Room Create Karo</div>
+      <!-- FIX: CSRF token add kiya -->
+      <form action="/admin/chat/create" method="POST" style="display:flex;gap:8px">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="name" placeholder="Room ka naam e.g. Editorial Meeting" required>
+        <button class="btn" type="submit">+ Create</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+  {% if rooms %}
+  <div class="rooms-grid">
+    {% for room in rooms %}
+    <div class="room-card">
+      <div class="room-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="room-name">{{ room.name }}</div>
+      <!-- FIX: Firestore timestamp safely format kiya — strftime crash fix -->
+      <div class="room-meta">
+        Created by {{ room.created_by }}
+        {% if room.created_at %}
+          &middot;
+          {% if room.created_at is string %}
+            {{ room.created_at[:16] }}
+          {% else %}
+            {{ room.created_at.strftime("%d %b, %H:%M") }}
+          {% endif %}
+        {% endif %}
+      </div>
+      <div class="room-actions">
+        <a href="/admin/chat/{{ room.id }}" class="btn" style="flex:1;justify-content:center;text-decoration:none">Join Room</a>
+        {% if is_superadmin %}
+        <!-- FIX: CSRF token add kiya room close form mein -->
+        <form action="/admin/chat/{{ room.id }}/close" method="POST" onsubmit="return confirm('Room band karna chahte ho?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-danger" type="submit">Close</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;display:block"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Abhi koi active room nahi.{% if is_superadmin %} Upar se naya room create karo.{% endif %}
+  </div>
+  {% endif %}
+</div>
+</body></html>
