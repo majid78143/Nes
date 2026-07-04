@@ -377,7 +377,7 @@ def admin_login():
                 docs=list(db.collection("users").where("email","==",email).limit(1).stream())
                 if docs:
                     u=docs[0].to_dict()
-                    if u.get("password")==hash_pw(pw):
+                    if u.get("role") in ["admin","editor"] and u.get("password")==hash_pw(pw):
                         session.permanent=True
                         session.update({"admin_logged_in":True,"admin_id":docs[0].id,
                                         "admin_name":u.get("name","Admin"),"admin_role":u.get("role","editor"),"admin_email":email})
