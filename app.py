@@ -374,7 +374,7 @@ def admin_login():
             return redirect(url_for("admin_dashboard"))
         if db:
             try:
-                docs=list(db.collection("users").where("email","==",email).where("role","in",["admin","editor"]).limit(1).stream())
+                docs=list(db.collection("users").where("email","==",email).limit(1).stream())
                 if docs:
                     u=docs[0].to_dict()
                     if u.get("password")==hash_pw(pw):
