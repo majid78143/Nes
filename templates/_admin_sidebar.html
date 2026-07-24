@@ -1,76 +1,112 @@
-<div class="sidebar">
-  <div class="sidebar-logo"><img src="{{ logo_url }}" alt="{{ site_name }}"></div>
-
-<style>
-.admin-notice-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#1a1500;border-bottom:1px solid #3a2d00;font-size:12px;color:#fbbf24;position:fixed;top:0;left:220px;right:0;z-index:200}
-.admin-notice-bar svg{width:14px;height:14px;stroke:#fbbf24;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.admin-notice-bar .an-text{flex:1}
-.anb-close{background:none;border:none;color:#fbbf24;cursor:pointer;font-size:15px;opacity:.7;padding:0 2px}
-@media(max-width:700px){.admin-notice-bar{left:0}}
-</style>
-<div id="admin-notice-zone"></div>
-<script>
-(function(){
-  async function loadAdminNotices(){
-    try{
-      const r=await fetch("/api/admin/notices");
-      const data=await r.json();
-      const zone=document.getElementById("admin-notice-zone");
-      if(!zone)return;
-      zone.innerHTML="";
-      (data.notices||[]).forEach(n=>{
-        const bar=document.createElement("div");
-        bar.className="admin-notice-bar";
-        const txt=document.createTextNode(n.text||"");
-        bar.innerHTML='<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
-        const span=document.createElement("span");
-        span.className="an-text";
-        span.textContent=n.text||"";
-        const btn=document.createElement("button");
-        btn.className="anb-close";
-        btn.textContent="✕";
-        btn.onclick=async function(){
-          await fetch("/admin/notice/"+n.id+"/dismiss",{method:"POST"});
-          bar.remove();
-        };
-        bar.appendChild(span);
-        bar.appendChild(btn);
-        zone.appendChild(bar);
-      });
-      // Push main-wrap down if notices present
-      const mw=document.querySelector(".main-wrap");
-      if(mw&&data.notices&&data.notices.length) mw.style.paddingTop=(28+(data.notices.length*44))+"px";
-    }catch(e){}
-  }
-  loadAdminNotices();
-})();
-</script>
-  <nav class="nav-links">
-    <a href="/admin/dashboard" class="nav-link {% if request.path=='/admin/dashboard' or request.path=='/admin/' %}active{% endif %}">📊 Dashboard</a>
-    <a href="/admin/articles" class="nav-link {% if '/admin/articles' in request.path or '/admin/article/' in request.path %}active{% endif %}">📰 Articles</a>
-    <a href="/admin/article/new" class="nav-link">✏️ New Article</a>
-    <div class="nav-sep">Content</div>
-    <a href="/admin/categories" class="nav-link {% if '/admin/categories' in request.path %}active{% endif %}">🗂️ Categories</a>
-    <a href="/admin/analytics" class="nav-link {% if '/admin/analytics' in request.path %}active{% endif %}">📈 Analytics</a>
-    <a href="/admin/comments" class="nav-link {% if '/admin/comments' in request.path %}active{% endif %}">💬 Comments</a>
-    {% if is_admin %}
-    <div class="nav-sep">Management</div>
-    <a href="/admin/team" class="nav-link {% if '/admin/team' in request.path %}active{% endif %}">👥 Team</a>
-    <a href="/admin/image-apis" class="nav-link {% if '/admin/image-apis' in request.path %}active{% endif %}">🖼️ Image APIs</a>
-    {% endif %}
-    {% if is_superadmin %}
-    <div class="nav-sep">Super Admin</div>
-    <a href="/admin/settings" class="nav-link {% if '/admin/settings' in request.path %}active{% endif %}">⚙️ Settings</a>
-    {% endif %}
-    <div class="nav-sep">Team</div>
-    <a href="/admin/chat" class="nav-link {% if '/admin/chat' in request.path %}active{% endif %}">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Team Chat
-    </a>
-    <div class="nav-sep">Account</div>
-    <a href="/admin/profile" class="nav-link {% if '/admin/profile' in request.path %}active{% endif %}">👤 My Profile</a>
-    <a href="/" target="_blank" class="nav-link">🌐 View Site</a>
-    <a href="/admin/logout" class="nav-link" style="color:#cc0000">🚪 Logout</a>
-  </nav>
-  <div class="sidebar-user"><strong>{{ session.get('admin_name','—') }}</strong>{{ session.get('admin_role','editor')|title }}</div>
+<!DOCTYPE html>
+<html lang="hi">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Team Chat — TezKhabar</title><link rel="icon" href="{{ logo_url }}">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#e0e0e0;display:flex;min-height:100vh}a{color:inherit;text-decoration:none}
+.sidebar{width:220px;background:#111;border-right:1px solid #1a1a1a;min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid #1a1a1a}.sidebar-logo img{height:36px;object-fit:contain}
+.nav-links{flex:1;padding:16px 0}.nav-link{display:flex;align-items:center;gap:10px;padding:11px 18px;color:#888;font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:.15s}.nav-link:hover,.nav-link.active{color:#fff;background:#1a1a1a;border-left-color:#cc0000}
+.nav-sep{padding:10px 18px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#333}
+.sidebar-user{padding:16px 18px;border-top:1px solid #1a1a1a;font-size:12px;color:#555}.sidebar-user strong{color:#888;display:block}
+.main-wrap{margin-left:220px;flex:1;padding:28px 32px}.page-head{margin-bottom:24px;display:flex;align-items:center;justify-content:space-between}
+.page-head h1{font-size:22px;font-weight:800;color:#fff}
+.mob-toggle{display:none;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:7px;padding:7px 10px;cursor:pointer;color:#ccc;align-items:center;justify-content:center}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+.btn{display:inline-flex;align-items:center;gap:6px;background:#cc0000;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}.btn:hover{background:#aa0000}
+.btn-secondary{background:#1e1e1e;border:1px solid #2a2a2a;color:#ccc}.btn-danger{background:#7a0000}
+.rooms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.room-card{background:#111;border:1px solid #1a1a1a;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:.2s}.room-card:hover{border-color:#cc0000;background:#131313}
+.room-icon{width:42px;height:42px;background:#1a1a1a;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.room-icon svg{width:22px;height:22px;stroke:#cc0000;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.room-name{font-size:15px;font-weight:700;color:#fff}.room-meta{font-size:11px;color:#444}
+.room-actions{display:flex;gap:8px;margin-top:4px}
+.create-form{background:#111;border:1px solid #1a1a1a;border-radius:10px;padding:18px;margin-bottom:24px;display:flex;gap:10px;align-items:flex-end}
+.create-form input{flex:1;background:#151515;border:1px solid #222;border-radius:7px;padding:10px 12px;color:#ddd;font-size:13px;outline:none}
+.create-form input:focus{border-color:#cc0000}
+.flash-zone{margin-bottom:20px}.flash{padding:10px 16px;border-radius:7px;font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}.flash-success{background:#0a2a0a;border:1px solid #166534;color:#4ade80}.flash button{background:none;border:none;color:inherit;cursor:pointer}
+.empty{text-align:center;padding:48px;color:#333;font-size:14px}
+@media(max-width:700px){
+  .sidebar{transform:translateX(-220px);transition:transform .25s ease}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.show{display:block}
+  .main-wrap{margin-left:0;padding:16px}
+  .create-form{flex-direction:column}
+  .mob-toggle{display:flex}
+  .page-head h1{font-size:18px}
+}
+</style></head>
+<body>
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+{% include "_admin_sidebar.html" %}
+<div class="main-wrap">
+  {% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-zone">{% for c,m in messages %}<div class="flash flash-{{c}}">{{ m }}<button onclick="this.parentElement.remove()">&#x2715;</button></div>{% endfor %}</div>{% endif %}{% endwith %}
+  <div class="page-head">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="mob-toggle" onclick="openSidebar()" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h1>Team Chat Rooms</h1>
+    </div>
+  </div>
+  {% if is_superadmin %}
+  <div class="create-form">
+    <div style="flex:1">
+      <div style="font-size:11px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Naya Room Create Karo</div>
+      <!-- FIX: CSRF token add kiya -->
+      <form action="/admin/chat/create" method="POST" style="display:flex;gap:8px">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="name" placeholder="Room ka naam e.g. Editorial Meeting" required>
+        <button class="btn" type="submit">+ Create</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+  {% if rooms %}
+  <div class="rooms-grid">
+    {% for room in rooms %}
+    <div class="room-card">
+      <div class="room-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="room-name">{{ room.name }}</div>
+      <!-- FIX: Firestore timestamp safely format kiya — strftime crash fix -->
+      <div class="room-meta">
+        Created by {{ room.created_by }}
+        {% if room.created_at %}
+          &middot;
+          {% if room.created_at is string %}
+            {{ room.created_at[:16] }}
+          {% else %}
+            {{ room.created_at.strftime("%d %b, %H:%M") }}
+          {% endif %}
+        {% endif %}
+      </div>
+      <div class="room-actions">
+        <a href="/admin/chat/{{ room.id }}" class="btn" style="flex:1;justify-content:center;text-decoration:none">Join Room</a>
+        {% if is_superadmin %}
+        <!-- FIX: CSRF token add kiya room close form mein -->
+        <form action="/admin/chat/{{ room.id }}/close" method="POST" onsubmit="return confirm('Room band karna chahte ho?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-danger" type="submit">Close</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;display:block"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Abhi koi active room nahi.{% if is_superadmin %} Upar se naya room create karo.{% endif %}
+  </div>
+  {% endif %}
 </div>
+<script>
+function openSidebar(){
+  document.querySelector('.sidebar').classList.add('open');
+  document.getElementById('sb-overlay').classList.add('show');
+}
+function closeSidebar(){
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('show');
+}
+</script>
+</body></html>
