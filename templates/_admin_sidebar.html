@@ -1,63 +1,148 @@
-<div class="sidebar" id="sidebar">
+<!-- Mobile hamburger button — sirf chhote screens pe dikhega -->
+<button class="mob-sidebar-toggle" id="mobSidebarToggle" onclick="openAdminSidebar()" aria-label="Menu kholo">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+</button>
+
+<!-- Dark overlay — mobile pe sidebar ke peeche -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeAdminSidebar()"></div>
+
+<div class="sidebar" id="adminSidebar">
+  <!-- Close button — sirf mobile pe -->
+  <button class="sb-close-btn" onclick="closeAdminSidebar()" aria-label="Band karo">&#x2715;</button>
+
   <div class="sidebar-logo">
     <a href="/admin/"><img src="{{ logo_url }}" alt="{{ site_name }}"></a>
   </div>
+
   <nav class="nav-links">
     <div class="nav-sep">Main</div>
-    <a href="/admin/" class="nav-link {% if request.endpoint in ['admin_dashboard'] %}active{% endif %}">
+    <a href="/admin/" class="nav-link {% if request.endpoint in ['admin_dashboard'] %}active{% endif %}" onclick="closeAdminSidebar()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Dashboard
     </a>
-    <a href="/admin/articles" class="nav-link {% if request.endpoint in ['admin_articles','admin_new_article','admin_edit_article'] %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <a href="/admin/articles" class="nav-link {% if request.endpoint in ['admin_articles','admin_new_article','admin_edit_article'] %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Articles
     </a>
-    <a href="/admin/article/new" class="nav-link {% if request.endpoint=='admin_new_article' %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <a href="/admin/article/new" class="nav-link" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       New Article
     </a>
+
     <div class="nav-sep">Manage</div>
-    <a href="/admin/categories" class="nav-link {% if request.endpoint=='admin_categories' %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    <a href="/admin/categories" class="nav-link {% if request.endpoint=='admin_categories' %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
       Categories
     </a>
-    <a href="/admin/comments" class="nav-link {% if request.endpoint=='admin_comments' %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <a href="/admin/comments" class="nav-link {% if request.endpoint=='admin_comments' %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Comments
     </a>
-    <a href="/admin/analytics" class="nav-link {% if request.endpoint=='admin_analytics' %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <a href="/admin/analytics" class="nav-link {% if request.endpoint=='admin_analytics' %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Analytics
     </a>
+
     {% if is_admin %}
     <div class="nav-sep">Admin</div>
-    <a href="/admin/team" class="nav-link {% if request.endpoint=='admin_team' %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <a href="/admin/team" class="nav-link {% if request.endpoint=='admin_team' %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Team
     </a>
-    <a href="/admin/image-apis" class="nav-link {% if request.endpoint=='admin_image_apis' %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <a href="/admin/image-apis" class="nav-link {% if request.endpoint=='admin_image_apis' %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       Image APIs
     </a>
-    <a href="/admin/chat" class="nav-link {% if request.endpoint in ['admin_chat_list','admin_chat_room'] %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <a href="/admin/chat" class="nav-link {% if request.endpoint in ['admin_chat_list','admin_chat_room'] %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Team Chat
     </a>
     {% endif %}
+
     {% if is_superadmin %}
-    <a href="/admin/settings" class="nav-link {% if request.endpoint=='admin_settings' %}active{% endif %}">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <a href="/admin/settings" class="nav-link {% if request.endpoint=='admin_settings' %}active{% endif %}" onclick="closeAdminSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </a>
     {% endif %}
   </nav>
+
   <div class="sidebar-user">
     <strong>{{ session.get('admin_name','Admin') }}</strong>
     {{ session.get('admin_role','editor') | capitalize }}
-    &nbsp;·&nbsp;
-    <a href="/admin/profile" style="color:#555">Profile</a>
-    &nbsp;·&nbsp;
-    <a href="/admin/logout" style="color:#7a0000">Logout</a>
+    &nbsp;·&nbsp;<a href="/admin/profile" style="color:#555">Profile</a>
+    &nbsp;·&nbsp;<a href="/admin/logout" style="color:#7a0000">Logout</a>
   </div>
-                                                                                                                                                                                                               </div>
-                                                                                                                                                                                                               
+</div>
+
+<style>
+/* ── Sidebar base ── */
+.sidebar{
+  width:220px;background:#111;border-right:1px solid #1a1a1a;
+  min-height:100vh;position:fixed;top:0;left:0;z-index:200;
+  display:flex;flex-direction:column;transition:transform .25s ease;
+}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid #1a1a1a}
+.sidebar-logo img{height:36px;object-fit:contain}
+.nav-links{flex:1;padding:16px 0;overflow-y:auto}
+.nav-link{display:flex;align-items:center;gap:10px;padding:11px 18px;color:#888;
+  font-size:13.5px;font-weight:500;border-left:3px solid transparent;
+  transition:.15s;text-decoration:none}
+.nav-link:hover,.nav-link.active{color:#fff;background:#1a1a1a;border-left-color:#cc0000}
+.nav-sep{padding:10px 18px 4px;font-size:10px;text-transform:uppercase;
+  letter-spacing:1px;color:#333}
+.sidebar-user{padding:16px 18px;border-top:1px solid #1a1a1a;
+  font-size:12px;color:#555;line-height:1.8}
+.sidebar-user strong{color:#888;display:block;margin-bottom:2px}
+
+/* ── Mobile toggle button ── */
+.mob-sidebar-toggle{
+  display:none;position:fixed;top:12px;left:12px;z-index:300;
+  background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;
+  padding:8px 10px;cursor:pointer;color:#ccc;align-items:center;
+  justify-content:center;line-height:0;
+}
+
+/* ── Close button inside sidebar (mobile) ── */
+.sb-close-btn{
+  display:none;position:absolute;top:12px;right:12px;
+  background:none;border:none;color:#555;font-size:18px;
+  cursor:pointer;line-height:1;z-index:10;
+}
+
+/* ── Overlay ── */
+.sb-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:199;
+}
+.sb-overlay.show{display:block}
+
+/* ── Main content area ── */
+.main-wrap{margin-left:220px;flex:1;padding:28px 32px}
+
+/* ── Mobile breakpoint ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .mob-sidebar-toggle{display:flex}
+  .sb-close-btn{display:block}
+  .main-wrap{margin-left:0;padding:56px 16px 24px}
+}
+</style>
+
+<script>
+function openAdminSidebar(){
+  document.getElementById('adminSidebar').classList.add('open');
+  document.getElementById('sbOverlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeAdminSidebar(){
+  document.getElementById('adminSidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+// ESC key se band karo
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAdminSidebar();});
+</script>
