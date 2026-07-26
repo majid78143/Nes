@@ -17,6 +17,8 @@ input:focus{border-color:#cc0000;background:#1e1010}
 .btn{width:100%;background:#cc0000;color:#fff;border:none;border-radius:8px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;transition:.15s;margin-top:4px}
 .btn:hover{background:#aa0000}
 .error{background:#1e0000;border:1px solid #550000;color:#ff6666;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:18px}
+.forgot{text-align:right;margin-top:-10px;margin-bottom:16px;font-size:12px}
+.forgot a{color:#555;text-decoration:none}.forgot a:hover{color:#cc0000}
 .footer-note{color:#2a2a2a;font-size:11px;text-align:center;margin-top:22px}
 </style>
 </head>
@@ -25,16 +27,19 @@ input:focus{border-color:#cc0000;background:#1e1010}
   <div class="logo-wrap"><img src="https://cdn.postimage.me/2026/06/26/56970.jpg" alt="TezKhabar"></div>
   <h2>Admin Panel</h2>
   <p class="sub">TezKhabar Content Management</p>
+
   {% if error %}<div class="error">⚠ {{ error }}</div>{% endif %}
+
   <form method="POST" autocomplete="off">
-    <!-- FIX: CSRF token add kiya -->
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>Email Address</label>
     <input type="email" name="email" required placeholder="admin@tezkhabar.com" autofocus>
     <label>Password</label>
     <input type="password" name="password" required placeholder="••••••••••">
+    <div class="forgot"><a href="/admin/forgot-password">Password bhool gaye?</a></div>
     <button class="btn" type="submit">Login →</button>
   </form>
+
   <p class="footer-note">Unauthorized access is prohibited</p>
 </div>
 </body>
