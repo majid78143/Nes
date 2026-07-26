@@ -41,4 +41,3 @@ function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=
 
 // ── Flash Messages Auto-hide ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.flash').forEach(f=>{setTimeout(()=>{if(f&&f.parentElement)f.style.transition='opacity .5s';f.style.opacity='0';setTimeout(()=>{if(f&&f.parentElement)f.remove();},500);},6000);});});
-
